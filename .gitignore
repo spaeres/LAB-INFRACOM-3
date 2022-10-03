@@ -222,3 +222,7 @@ fabric.properties
 # idea folder, uncomment if you don't need it
 .idea
 .DS_Store
+
+#Archivos para enviar
+/ARCHIVOS
+
