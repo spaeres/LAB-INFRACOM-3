@@ -1,21 +1,14 @@
 import socket  # Importa socket
 import hashlib
-
-# Constantes:
-NOMBRE_ARCHIVO_100M = 'archivo_100M'
-NOMBRE_ARCHIVO_250M = 'archivo_250M'
-
-RUTA_ARCHIVO_100M = '../ARCHIVOS/archivo_100M'
-RUTA_ARCHIVO_250M = '../ARCHIVOS/archivo_250M'
+import constantes as cons
 
 
 def hash_archivo(nombre_archivo):
     md5_hash = hashlib.md5()
-    a_file = ''
-    if nombre_archivo == NOMBRE_ARCHIVO_100M:
-        a_file = open(RUTA_ARCHIVO_100M, "rb")
+    if nombre_archivo == cons.NOMBRE_ARCHIVO_100M:
+        a_file = open(cons.RUTA_ARCHIVO_100M, "rb")
     else:
-        a_file = open(RUTA_ARCHIVO_250M, "rb")
+        a_file = open(cons.RUTA_ARCHIVO_250M, "rb")
     content = a_file.read()
     md5_hash.update(content)
 
@@ -43,12 +36,12 @@ while True:
         break
     f = ''
     nombre_archivo = ''
-    if buffer == '100':
-        nombre_archivo = NOMBRE_ARCHIVO_100M
-        f = open(RUTA_ARCHIVO_100M, 'r')
+    if buffer == cons.NOMBRE_ARCHIVO_100M:
+        nombre_archivo = cons.NOMBRE_ARCHIVO_100M
+        f = open(cons.RUTA_ARCHIVO_100M, 'r')
     else:
-        nombre_archivo = NOMBRE_ARCHIVO_250M
-        f = open(RUTA_ARCHIVO_250M, 'r')
+        nombre_archivo = cons.NOMBRE_ARCHIVO_250M
+        f = open(cons.RUTA_ARCHIVO_250M, 'r')
     hash = hash_archivo(nombre_archivo)
     l = f.read(1024)
     print("Enviando Hash...")
