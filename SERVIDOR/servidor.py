@@ -1,6 +1,7 @@
 import socket  # Importa socket
 import hashlib
 import constantes as cons
+import datetime
 
 
 def hash_archivo(nombre_archivo):
@@ -14,6 +15,22 @@ def hash_archivo(nombre_archivo):
 
     digest = md5_hash.hexdigest()
     return digest
+
+
+def escribir_log(nombre_archivo, cliente, exitosa, tiempo):
+    nombre_log = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S").__str__() + '-log'
+    f = open(cons.RUTA_DIR_LOGS + nombre_log + ".txt", "a")
+    f.write("---------Envio------------\n")
+    if nombre_archivo == cons.NOMBRE_ARCHIVO_100M:
+        f.write("Archivo enviado: " + nombre_archivo + " de tamaño: " + "100 Mb\n")
+    else:
+        f.write("Archivo enviado: " + nombre_archivo + " de tamaño: " + "250 Mb\n")
+    f.write("Enviado a: " + cliente + "\n")
+    envio_exitoso = 'SI' if exitosa else 'NO'
+    f.write("Envio exitoso: " + envio_exitoso + "\n")
+    f.write("Tiempo de tranferencia: " + tiempo + "\n")
+    f.write("--------------------------\n")
+    f.close()
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Crea Socket TCP
