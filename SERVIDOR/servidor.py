@@ -43,7 +43,7 @@ s.listen(5)  # Espera por la conexion del cliente.
 while True:
     buffer = ''
     c, addr = s.accept()  # Establece la conexion con el cliente
-    print('Conexion recivida de: ', addr)
+    print('Conexion recibida de: ', addr)
     # Lee el tipo de archivo que necesita el cliente:
     data = c.recv(1024)
     if data:
