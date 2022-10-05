@@ -55,7 +55,7 @@ while True:
     if data:
         buffer += data.decode('ascii')
         print(buffer)
-        s.send(b'HOLA!')
+        c.send(b'HOLA!')
     else:
         break
     f = ''
