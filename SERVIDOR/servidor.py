@@ -53,7 +53,7 @@ while True:
     # Lee el tipo de archivo que necesita el cliente:
     data = c.recv(1024)
     if data:
-        buffer += data
+        buffer += b'data'.decode('ascii')
         print(buffer)
     else:
         break
@@ -72,7 +72,7 @@ while True:
     while l:
         print("Enviando Archivo...")
         s.send(l)
-        l = f.read(1024)
+        l = f.read(10024)
     f.close()
     print("Enviado exitosamente")
     s.shutdown(socket.SHUT_WR)

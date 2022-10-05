@@ -30,6 +30,9 @@ sock.connect(server_address)
 escribir_directorio()
 
 try:
+
+    message = b'Hola, estoy listo para recibir archivos |'
+    sock.send(message)
     #el buffer y todo lo demas
     #necesito archivos?
     
