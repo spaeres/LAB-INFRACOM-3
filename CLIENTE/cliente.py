@@ -26,7 +26,7 @@ def escribir_directorio():
         if e.errno != errno.EEXIST:
             raise
 def escribir_log(x,y,tipo_archivo,exito, hash):
-    nombre_log = "Cliente"+x+"-Prueba-"+y+".txt"
+    nombre_log = "Cliente"+x+"-Prueba-"+y+"("+tipo_archivo+").txt"
     file = open("./ArchivosRecibidos/"+nombre_log,"a")
     file.write("------------Recibido-------------\n")
     if(tipo_archivo=="100MB"):
@@ -34,9 +34,9 @@ def escribir_log(x,y,tipo_archivo,exito, hash):
     elif(tipo_archivo=="250MB"):
         file.write("Archivo recibido:   "+NOMBRE_ARCHIVO_250M + " de tamaño 250MB\n")
     if(exito):
-        file.write("El hash recibido es igual al hash del archivo recibido")
+        file.write("El hash recibido es igual al hash del archivo recibido\n")
     else:
-        file.write("El hash recibido es diferente al hash del archivo recibido")
+        file.write("El hash recibido es diferente al hash del archivo recibido\n")
 
     file.write("hash esperado: "+hash)
     file.close()
