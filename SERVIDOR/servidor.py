@@ -59,13 +59,20 @@ while True:
     else:
         break
     f = ''
+    buffer = ''
     nombre_archivo = ''
-    if buffer == NOMBRE_ARCHIVO_100M:
-        nombre_archivo = NOMBRE_ARCHIVO_100M
-        f = open(RUTA_ARCHIVO_100M, 'rb')
+    data = c.recv(1024)
+    if data:
+        buffer += data.decode('ascii')
+        print(buffer)
+        if buffer == NOMBRE_ARCHIVO_100M:
+            nombre_archivo = NOMBRE_ARCHIVO_100M
+            f = open(RUTA_ARCHIVO_100M, 'rb')
+        else:
+            nombre_archivo = NOMBRE_ARCHIVO_250M
+            f = open(RUTA_ARCHIVO_250M, 'rb')
     else:
-        nombre_archivo = NOMBRE_ARCHIVO_250M
-        f = open(RUTA_ARCHIVO_250M, 'rb')
+        break
     hash = hash_archivo(nombre_archivo)
     l = f.read(10024)
     print("Enviando Hash...")
