@@ -1,6 +1,8 @@
 import socket  # Importa socket
 import hashlib
 import datetime
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE,SIG_DFL)
 
 NOMBRE_ARCHIVO_100M = 'archivo_100M'
 NOMBRE_ARCHIVO_250M = 'archivo_250M'
@@ -57,6 +59,7 @@ while True:
         print(buffer)
         c.send(b'HOLA!')
     else:
+        print("SALE")
         break
     f = ''
     buffer = ''
@@ -72,11 +75,13 @@ while True:
             nombre_archivo = NOMBRE_ARCHIVO_250M
             f = open(RUTA_ARCHIVO_250M, 'rb')
     else:
+        print("SALE")
         break
-    hash = hash_archivo(nombre_archivo)
-    l = f.read(10024)
+    hash = hash_archivo(nombre_archivo) + '|'
     print("Enviando Hash...")
-    s.send(hash)
+    print(hash)
+    #s.send(hash.encode(encoding='UTF-8'))
+    l = f.read(10024)
     while l:
         print("Enviando Archivo...")
         s.send(l)

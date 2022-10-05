@@ -14,7 +14,7 @@ def escribir_directorio():
         if e.errno != errno.EEXIST:
             raise
 
-    
+
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -23,6 +23,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # given by the caller
 host = '192.168.20.34'
 port = 29170
+hash = ""
 server_address = (host, port)
 #server_address = (sys.argv[1], 10000)
 print('connecting to {} port {}'.format(*server_address))
@@ -30,23 +31,23 @@ sock.connect(server_address)
 escribir_directorio()
 
 try:
-
     message = b'Hola, estoy listo para recibir archivos |'
     sock.send(message)
-    #el buffer y todo lo demas
-    #necesito archivos?
-    
-    #message = b'This is the message.  It will be repeated.'
-    #print('sending {!r}'.format(message))
-    #sock.recv(message)
-    
-    #data1 = sock.recv(1024)
 
-    #amount_received = 0
-    #amount_expected = len(message)
-    #while amount_received < amount_expected:
+    dataInicial = sock.recv(1024)
+    print('Recibi tu mensaje: {!r}'.format(dataInicial))
+
+    entrada1 = input('Que archivo quieres? 100 MB o 250 MB? (Por favor escribir unicamente el que desea: Ej: "100MB")')
+    rutaDeseada = ''
+    if(entrada1=="100MB"):
+        rutaDeseada = b'archivo_100M'
+    elif(entrada1=="250MB"):
+        rutaDeseada = b'archivo_250M'
+
+    sock.send(rutaDeseada)
+
     while True:
-        data = sock.recv(1024)
+        data = sock.recv(10024)
         print('El mensaje fue recibido {!r}'.format(data))
 
 finally:
