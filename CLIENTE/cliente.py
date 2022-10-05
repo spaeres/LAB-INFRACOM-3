@@ -25,6 +25,21 @@ def escribir_directorio():
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
+def escribir_log(x,y,tipo_archivo,exito, hash):
+    nombre_log = "Cliente"+x+"-Prueba-"+y+".txt"
+    file = open("./ArchivosRecibidos/"+nombre_log,"a")
+    file.write("------------Recibido-------------\n")
+    if(tipo_archivo=="100MB"):
+        file.write("Archivo recibido:   "+NOMBRE_ARCHIVO_100M + " de tamaño 100MB\n")
+    elif(tipo_archivo=="250MB"):
+        file.write("Archivo recibido:   "+NOMBRE_ARCHIVO_250M + " de tamaño 250MB\n")
+    if(exito):
+        file.write("El hash recibido es igual al hash del archivo recibido")
+    else:
+        file.write("El hash recibido es diferente al hash del archivo recibido")
+
+    file.write("hash esperado: "+hash)
+    file.close()
 
 
 def comparar_hash(archivo_recibido, hash_recibido):
@@ -48,7 +63,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Connect the socket to the port on the server
 # given by the caller
-host = '192.168.20.34'
+host = '192.168.85.128'
 port = 29170
 hash = ""
 server_address = (host, port)
@@ -58,56 +73,63 @@ sock.connect(server_address)
 escribir_directorio()
 
 try:
-    message = b'Hola, estoy listo para recibir archivos |'
-    sock.send(message)
+    entrada0= input('¿Cuantos clientes desea? (Minimo 1 - maximo 25)\n')
+    for i in range(int(entrada0)):
+        message = b'Hola, estoy listo para recibir archivos |'
+        sock.send(message)
+        
+        dataInicial = sock.recv(1024)
+        print('Recibi tu mensaje: {!r}'.format(dataInicial))
 
-    dataInicial = sock.recv(1024)
-    print('Recibi tu mensaje: {!r}'.format(dataInicial))
+        entrada1 = input('Que archivo quieres? 100 MB o 250 MB? (Por favor escribir unicamente el que desea: Ej: "100MB")\n')
+        rutaDeseada = ''
+        ruta_archivo = ''
+        nombre_archivo = ''
+        if (entrada1 == "100MB"):
+            nombre_archivo = NOMBRE_ARCHIVO_100M
+            ruta_archivo = RUTA_ARCHIVO_100M
+            rutaDeseada = b'archivo_100M'
+        elif (entrada1 == "250MB"):
+            nombre_archivo = NOMBRE_ARCHIVO_250M
+            ruta_archivo = RUTA_ARCHIVO_250M
+            rutaDeseada = b'archivo_250M'
 
-    entrada1 = input('Que archivo quieres? 100 MB o 250 MB? (Por favor escribir unicamente el que desea: Ej: "100MB")')
-    rutaDeseada = ''
-    ruta_archivo = ''
-    nombre_archivo = ''
-    if (entrada1 == "100MB"):
-        nombre_archivo = NOMBRE_ARCHIVO_100M
-        ruta_archivo = RUTA_ARCHIVO_100M
-        rutaDeseada = b'archivo_100M'
-    elif (entrada1 == "250MB"):
-        nombre_archivo = NOMBRE_ARCHIVO_250M
-        ruta_archivo = RUTA_ARCHIVO_250M
-        rutaDeseada = b'archivo_250M'
-
-    sock.send(rutaDeseada)
-    # HASH:
-    dataHash = sock.recv(1024)
-    datosArchivoRestantes = ''
-    if dataHash:
-        recibido = dataHash.decode('ascii')
-        nombre = recibido[0:recibido.index('|')]
-        datosArchivoRestantes = recibido[recibido.index('|') + 1:len(recibido)]
-    else:
-        raise Exception('Deberia recibir el hash')
-    print('Hash recibido:' + nombre)
-
-    # Archivo:
-    f = open(ruta_archivo, 'wb')
-    l = sock.recv(1024)
-    despedida = ''
-    while (l):
-        paquete = l.decode('ascii')
-        print("Recibiendo archivo...")
-        # Ultimo paquete del archivo es el que termina con |:
-        if '|' in paquete:
-            despedida = paquete[paquete.index('|') + 1:len(paquete)]
-            # No se escribe el ultimo paquete!
-            break
-        f.write(l)
+        sock.send(rutaDeseada)
+        # HASH:
+        dataHash = sock.recv(1024)
+        datosArchivoRestantes = ''
+        if dataHash:
+            recibido = dataHash.decode('latin1')
+            nombre = recibido[0:recibido.index('|')]
+            datosArchivoRestantes = recibido[recibido.index('|') + 1:len(recibido)]
+        else:
+            raise Exception('Deberia recibir el hash')
+            
+        print('Hash recibido:' + nombre)
+        # Archivo:
+        f = open(ruta_archivo, 'wb')
         l = sock.recv(1024)
-    f.close()
-    print('Recibido: ', despedida)
-    print('Verificando integridad del archivo....')
-    comparacion = comparar_hash(nombre_archivo, nombre)
-    print('Hash verificado correctamente!') if comparacion[0] else print('Hash enviado por el servidor no es corecto:'+nombre+"!="+comparacion[1])
-    print('Recibido despedida server: '+despedida)
+        despedida = ''
+        while (l):
+            paquete = l.decode('latin1')
+            print("Recibiendo archivo...")
+            # Ultimo paquete del archivo es el que termina con |:
+            if '|' in paquete:
+                despedida = paquete[paquete.index('|') + 1:len(paquete)]
+                # No se escribe el ultimo paquete!
+                break
+            f.write(l)
+            l = sock.recv(1024)
+        f.close()
+        print('Recibido: ', despedida)
+        print('Verificando integridad del archivo....')
+        comparacion = comparar_hash(nombre_archivo, nombre)
+        print('Hash verificado correctamente!') if comparacion[0] else print('Hash enviado por el servidor no es correcto:'+nombre+"!="+comparacion[1])
+        x=i+1
+        escribir_log(str(x),entrada0,entrada1,comparacion[0],comparacion[1])
+        print('Recibido despedida server: '+despedida)
 finally:
     sock.close()
+
+
+    

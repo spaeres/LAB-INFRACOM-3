@@ -100,5 +100,5 @@ while True:
     escribir_log(nombre_archivo, addr, exitoso, (tiempo_final-tiempo_inicio))
     print("Enviado exitosamente")
     s.shutdown(socket.SHUT_WR)
-    c.send(b'|Gracias por conectarse. Archivo enviado.')
+    #c.send(b'|Gracias por conectarse. Archivo enviado.')
     c.close()  # Cerrar conexion
