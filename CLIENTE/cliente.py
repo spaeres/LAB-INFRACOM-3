@@ -21,7 +21,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Connect the socket to the port on the server
 # given by the caller
-host = socket.gethostname()
+host = '192.168.85.128'
 port = 12345
 server_address = (host, port)
 #server_address = (sys.argv[1], 10000)
