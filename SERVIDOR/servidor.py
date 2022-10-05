@@ -53,7 +53,7 @@ while True:
     # Lee el tipo de archivo que necesita el cliente:
     data = c.recv(1024)
     if data:
-        buffer += b'data'.decode('ascii')
+        buffer += data.decode('ascii')
         print(buffer)
     else:
         break
