@@ -2,7 +2,9 @@ import socket  # Importa socket
 import hashlib
 import datetime
 from signal import signal, SIGPIPE, SIG_DFL
-signal(SIGPIPE,SIG_DFL)
+import time
+
+signal(SIGPIPE, SIG_DFL)
 
 NOMBRE_ARCHIVO_100M = 'archivo_100M'
 NOMBRE_ARCHIVO_250M = 'archivo_250M'
@@ -33,10 +35,10 @@ def escribir_log(nombre_archivo, cliente, exitosa, tiempo):
         f.write("Archivo enviado: " + nombre_archivo + " de tamaño: " + "100 Mb\n")
     else:
         f.write("Archivo enviado: " + nombre_archivo + " de tamaño: " + "250 Mb\n")
-    f.write("Enviado a: " + cliente + "\n")
+    f.write("Enviado a: " + str(cliente[0]) + "\n")
     envio_exitoso = 'SI' if exitosa else 'NO'
     f.write("Envio exitoso: " + envio_exitoso + "\n")
-    f.write("Tiempo de tranferencia: " + tiempo + "\n")
+    f.write("Tiempo de tranferencia: " + str(tiempo) + " segundos.\n")
     f.write("--------------------------\n")
     f.close()
 
@@ -78,16 +80,25 @@ while True:
         print("SALE")
         break
     hash = hash_archivo(nombre_archivo) + '|'
-    print("Enviando Hash...")
-    print(hash)
-    #s.send(hash.encode(encoding='UTF-8'))
-    l = f.read(10024)
-    while l:
-        print("Enviando Archivo...")
-        s.send(l)
+    print("Enviando Hash..." + hash)
+    try:
+        tiempo_inicio = round(time.time())
+        exitoso = True
+        c.send(hash.encode(encoding='UTF-8'))
         l = f.read(10024)
-    f.close()
+
+        while l:
+            print("Enviando Archivo...")
+            c.send(l)
+            l = f.read(10024)
+        f.close()
+    except Exception as e:
+        print("Error: "+e.__str__())
+        exitoso = False
+        break
+    tiempo_final = round(time.time())
+    escribir_log(nombre_archivo, addr, exitoso, (tiempo_final-tiempo_inicio))
     print("Enviado exitosamente")
     s.shutdown(socket.SHUT_WR)
-    c.send('Gracias por conectarse. Archivo enviado.')
+    c.send(b'|Gracias por conectarse. Archivo enviado.')
     c.close()  # Cerrar conexion
